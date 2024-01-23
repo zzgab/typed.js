@@ -86,7 +86,7 @@ export default class Typed {
    * Begins the typing animation
    * @private
    */
-  begin() {
+  begin(isSmartLoop) {
     this.options.onBegin(this);
     this.typingComplete = false;
     this.shuffleStringsIfNeeded(this);
@@ -95,7 +95,7 @@ export default class Typed {
     this.timeout = setTimeout(() => {
       // If the strPos is 0, we're starting from the beginning of a string
       // else, we're starting with a previous string that needs to be backspaced first
-      if (this.strPos === 0) {
+      if ((this.strPos === 0) || isSmartLoop) {
         this.typewrite(this.strings[this.sequence[this.arrayPos]], this.strPos);
       } else {
         this.backspace(this.strings[this.sequence[this.arrayPos]], this.strPos);
@@ -251,6 +251,7 @@ export default class Typed {
     const humanize = this.humanizer(this.backSpeed);
 
     this.timeout = setTimeout(() => {
+      const isSmartLoop = this.smartBackspace && this.loop && this.smartLoop && !this.shuffle;
       curStrPos = htmlParser.backSpaceHtmlChars(curString, curStrPos, this);
       // replace text with base text + typed characters
       const curStringAtPosition = curString.substring(0, curStrPos);
@@ -259,7 +260,7 @@ export default class Typed {
       // if smartBack is enabled
       if (this.smartBackspace) {
         // the remaining part of the current string is equal of the same part of the new string
-        let nextString = this.strings[this.arrayPos + 1];
+        let nextString = this.strings[isSmartLoop ? (this.arrayPos + 1) % this.strings.length : this.arrayPos + 1];
         if (
           nextString &&
           curStringAtPosition === nextString.substring(0, curStrPos)
@@ -285,8 +286,8 @@ export default class Typed {
         if (this.arrayPos === this.strings.length) {
           this.arrayPos = 0;
           this.options.onLastStringBackspaced();
-          this.shuffleStringsIfNeeded();
-          this.begin();
+          this.strPos = isSmartLoop ? this.stopNum : 0;
+          this.begin(isSmartLoop);
         } else {
           this.typewrite(this.strings[this.sequence[this.arrayPos]], curStrPos);
         }

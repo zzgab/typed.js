@@ -38,6 +38,11 @@ const defaults = {
   smartBackspace: true,
 
   /**
+   * @property {boolean} smartLoop when smartBackspace is on and loop is on, this will continue to smartBackspace over to next iteration (unless shuffle is on)
+   */
+  smartLoop: false,
+
+  /**
    * @property {boolean} shuffle shuffle the strings
    */
   shuffle: false,

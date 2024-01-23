@@ -56,6 +56,9 @@ export default class Initializer {
     // only backspace what doesn't match the previous string
     self.smartBackspace = self.options.smartBackspace;
 
+    // behave according to smartBackspace also in loops, when restarting from last to first
+    self.smartLoop = self.options.smartLoop;
+
     // amount of time to wait before backspacing
     self.backDelay = self.options.backDelay;
 
